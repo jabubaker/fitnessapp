@@ -7,7 +7,7 @@ function WorkoutDisplay({ exercise, completedSets }) {
       <p>
         {exercise.reps} reps x {exercise.sets} sets @ {exercise.weight} lbs
       </p>
-      <p>Completed Sets: {completedSets}</p>
+      <p>Current Set: {completedSets + 1}/{exercise.sets}</p>
     </div>
   );
 }
