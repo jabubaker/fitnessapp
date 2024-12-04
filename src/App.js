@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Timer from "./components/Timer";
 import WorkoutInput from "./components/WorkoutInput";
@@ -8,8 +8,8 @@ function App() {
   const [program, setProgram] = useState([]);
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [showTimer, setShowTimer] = useState(false);
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
 
-  // Parse workout input to structured data
   const parseWorkout = (input) => {
     const lines = input.split("\n");
     return lines.map((line) => {
@@ -27,54 +27,97 @@ function App() {
     }).filter(Boolean);
   };
 
-  // Handle workout input change
   const handleInput = (input) => {
-    setProgram(parseWorkout(input));
-    setCurrentExerciseIndex(0); // Reset to start from the first exercise
+    const parsedProgram = parseWorkout(input);
+    if (parsedProgram.length === 0) {
+      alert("Please enter a valid workout program. Example format: 3x10 squats 135#");
+      return;
+    }
+    setProgram(parsedProgram);
+    setCurrentExerciseIndex(0);
+    setShowTimer(false);
+    setIsTimerRunning(false);
   };
 
-  // Increment completed set and show timer or next exercise
-  const incrementSet = () => {
+  const moveToNextExercise = () => {
+    if (currentExerciseIndex < program.length - 1) {
+      setCurrentExerciseIndex(prev => prev + 1);
+      return true;
+    }
+    return false;
+  };
+
+  const handleSetCompletion = () => {
+    setShowTimer(true);
+    setIsTimerRunning(true);
+  };
+
+  const handleTimerComplete = () => {
     const updatedProgram = [...program];
     const exercise = updatedProgram[currentExerciseIndex];
     exercise.completedSets += 1;
 
-    if (exercise.completedSets < exercise.sets) {
-      setShowTimer(true);
-    } else {
-      setShowTimer(false);
-      setCurrentExerciseIndex((prev) => prev + 1);
+    setIsTimerRunning(false);
+    setShowTimer(false);
+
+    if (exercise.completedSets >= exercise.sets) {
+      if (!moveToNextExercise()) {
+        exercise.completedSets = exercise.sets;
+      }
     }
     setProgram(updatedProgram);
   };
 
+  const skipTimer = () => {
+    setIsTimerRunning(false);
+    setShowTimer(false);
+    handleTimerComplete();
+  };
+
+  const isWorkoutComplete = currentExerciseIndex >= program.length;
+  const currentExercise = program[currentExerciseIndex];
+
   return (
     <div className="app">
-      <h1>💪 Workout Tracker</h1>
-      <WorkoutInput onSubmit={handleInput} />
-      {program.length > 0 && currentExerciseIndex < program.length && (
-        <WorkoutDisplay
-          exercise={program[currentExerciseIndex]}
-          completedSets={program[currentExerciseIndex].completedSets}
-        />
-      )}
-      {showTimer ? (
-        <Timer duration={60} onComplete={incrementSet} />
-      ) : (
-        currentExerciseIndex < program.length && (
-          <button className="next-set-button" onClick={incrementSet}>
-            Complete Set
-          </button>
-        )
-      )}
-      {program.length > 0 && currentExerciseIndex >= program.length && (
-        <div className="completion-message">
-          🎉 Workout Complete! Great job! 🎉
-        </div>
-      )}
+      <div className="app-container">
+        <h1>💪 Workout Tracker</h1>
+        <WorkoutInput onSubmit={handleInput} />
+        
+        {program.length > 0 && !isWorkoutComplete && (
+          <>
+            <WorkoutDisplay
+              exercise={currentExercise}
+              completedSets={currentExercise.completedSets}
+              isTimerRunning={isTimerRunning}
+            />
+            
+            {showTimer ? (
+              <div className="timer-container">
+                <Timer duration={60} onComplete={handleTimerComplete} />
+                <button className="skip-timer-button" onClick={skipTimer}>
+                  Skip Rest
+                </button>
+              </div>
+            ) : (
+              <button 
+                className="next-set-button" 
+                onClick={handleSetCompletion}
+                disabled={currentExercise.completedSets >= currentExercise.sets}
+              >
+                Complete Set
+              </button>
+            )}
+          </>
+        )}
+
+        {isWorkoutComplete && program.length > 0 && (
+          <div className="completion-message">
+            🎉 Workout Complete! Great job! 🎉
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 export default App;
-

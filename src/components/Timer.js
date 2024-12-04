@@ -8,16 +8,25 @@ function Timer({ duration, onComplete }) {
       onComplete();
       return;
     }
-    const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    return () => clearTimeout(timer);
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => Math.max(0, prev - 1));
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, [timeLeft, onComplete]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="timer">
-      Rest Time: <span className="timer-countdown">{timeLeft}s</span>
+      Rest Time: <span className="timer-countdown">{formatTime(timeLeft)}</span>
     </div>
   );
 }
 
 export default Timer;
-
