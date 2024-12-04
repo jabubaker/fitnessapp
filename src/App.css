@@ -1,0 +1,78 @@
+/* Basic app styling */
+.app {
+  background-color: #f9f9f9;
+  color: #333;
+  text-align: center;
+  padding: 20px;
+  font-family: 'Roboto', sans-serif;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #4caf50;
+}
+
+.workout-input textarea {
+  width: 80%;
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.workout-input textarea:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+.workout-display {
+  background-color: #fff;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.workout-display h2 {
+  color: #2196f3;
+  font-size: 1.5rem;
+}
+
+.workout-display p {
+  font-size: 1.2rem;
+}
+
+.timer {
+  font-size: 1.5rem;
+  margin: 20px 0;
+  font-weight: bold;
+}
+
+.timer-countdown {
+  color: red;
+}
+
+.next-set-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.next-set-button:hover {
+  background-color: #45a049;
+}
+
+.completion-message {
+  font-size: 1.5rem;
+  color: #4caf50;
+  font-weight: bold;
+}
+
+
