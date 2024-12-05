@@ -13,15 +13,15 @@ function App() {
   const parseWorkout = (input) => {
     const lines = input.split("\n");
     return lines.map((line) => {
-      const match = line.match(/(\d+)x(\d+)\s+(.+?)\s+(\d+(?:\.\d+)?)#/);
-      if (match) {
-        return {
-          sets: parseInt(match[1], 10),
-          reps: parseInt(match[2], 10),
-          exercise: match[3].trim(),
-          weight: parseFloat(match[4]),
-          completedSets: 0,
-        };
+ const match = line.match(/(\d+)x(\d+)\s+(.+?)(?:\s+(\d+(?:\.\d+)?))?$/);
+    if (match) {
+      return {
+        sets: parseInt(match[1], 10),
+        reps: parseInt(match[2], 10),
+        exercise: match[3].trim(),
+        weight: match[4] ? parseFloat(match[4], 10) : 0, // Default weight to 0 if not provided
+        completedSets: 0,        
+};
       }
       return null;
     }).filter(Boolean);
