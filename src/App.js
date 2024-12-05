@@ -9,7 +9,7 @@ function App() {
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [showTimer, setShowTimer] = useState(false);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-
+  const [isWorkoutComplete, setIsWorkoutComplete] = useState(false);
   const parseWorkout = (input) => {
     const lines = input.split("\n");
     return lines.map((line) => {
@@ -52,29 +52,32 @@ function App() {
     setIsTimerRunning(true);
   };
 
-  const handleTimerComplete = () => {
-    const updatedProgram = [...program];
-    const exercise = updatedProgram[currentExerciseIndex];
-    exercise.completedSets += 1;
+ const handleTimerComplete = () => {
+  const updatedProgram = [...program];
+  const exercise = updatedProgram[currentExerciseIndex];
+  exercise.completedSets += 1;
 
-    setIsTimerRunning(false);
-    setShowTimer(false);
+  setIsTimerRunning(false);
+  setShowTimer(false);
 
-    if (exercise.completedSets >= exercise.sets) {
-      if (!moveToNextExercise()) {
-        exercise.completedSets = exercise.sets;
-      }
+  if (exercise.completedSets >= exercise.sets) {
+    if (currentExerciseIndex === program.length - 1) {
+      // Mark the workout as complete
+      setIsWorkoutComplete(true);
+    } else {
+      // Move to the next exercise
+      setCurrentExerciseIndex((prevIndex) => prevIndex + 1);
     }
-    setProgram(updatedProgram);
-  };
+  }
 
+  setProgram(updatedProgram);
+};
   const skipTimer = () => {
     setIsTimerRunning(false);
     setShowTimer(false);
     handleTimerComplete();
   };
 
-  const isWorkoutComplete = currentExerciseIndex >= program.length;
   const currentExercise = program[currentExerciseIndex];
 
   return (
